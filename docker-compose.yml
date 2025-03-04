@@ -2,17 +2,12 @@ services:
   server:
     build: packages/server
     restart: always
-    # depends_on:
-    #   - database
+    depends_on:
+      - databaseXp
     env_file: .env
     environment:
-      - PORT=$SERVER_SERVICE_PORT
-      # - PG_HOST=database
-      # - PG_PORT=5432
-      # - PG_USER=$PG_USER
-      # - PG_PASS=$PG_PASS 
-      # - PG_DB=$PG_DB
-      # - JWT_SECRET=$JWT_SECRET
+      MYSQL_HOST: databaseXp
+      PORT: $SERVER_SERVICE_PORT
     ports:
       - ${SERVER_SERVICE_PORT}:${SERVER_SERVICE_PORT}
     volumes:
@@ -28,7 +23,7 @@ services:
     depends_on:
       - server
     environment:
-      - PORT=$WEB_CLIENT_PORT
+      PORT: $WEB_CLIENT_PORT
     ports:
       - ${WEB_CLIENT_PORT}:${WEB_CLIENT_PORT}
     volumes:
@@ -37,20 +32,19 @@ services:
     networks:
       - shared-network
     command: npm run dev
-  # database:
-  #   image: postgres
-  #   restart: always
-  #   env_file: .env
-  #   environment:
-  #     POSTGRES_USER: $PG_USER 
-  #     POSTGRES_PASSWORD: $PG_PASS
-  #     POSTGRES_DB: $PG_DB
-  #   volumes:
-  #      - dbdata:/var/lib/postgresql/data
-  #   networks:
-  #     - shared-network
+  databaseXp:
+    image: mysql
+    restart: always
+    env_file: .env
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    volumes:
+      - ./mysql-init:/docker-entrypoint-initdb.d
+      - dbdata:/var/lib/portfolioDb/data
+    networks:
+      - shared-network
 networks:
   shared-network:
     driver: bridge
-# volumes:
-#   dbdata:
+volumes:
+  dbdata:

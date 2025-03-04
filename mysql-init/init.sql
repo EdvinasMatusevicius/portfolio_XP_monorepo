@@ -1,0 +1,7 @@
+CREATE DATABASE IF NOT EXISTS databaseXp;
+CREATE TABLE IF NOT EXISTS feedback (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(100) NOT NULL,
+    subject VARCHAR(200) NOT NULL,
+    response text
+);
