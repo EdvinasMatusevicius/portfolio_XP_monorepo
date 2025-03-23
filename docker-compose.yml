@@ -1,6 +1,7 @@
 services:
   server:
-    build: packages/server
+    build: 
+      context: ./packages/server
     restart: always
     depends_on:
       - databaseXp
@@ -16,7 +17,8 @@ services:
       - shared-network
     command: /usr/portfolioXP/node_modules/.bin/nodemon -L --exec ts-node ./src/index.ts
   client:
-    build: packages/client
+    build: 
+      context: ./packages/client
     restart: always
     depends_on:
       - server
