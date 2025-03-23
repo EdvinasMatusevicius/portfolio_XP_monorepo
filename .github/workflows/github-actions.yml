@@ -19,12 +19,12 @@ jobs:
       - name: Build Docker Compose
         run: docker compose up --build --no-start # Builds images, but doesn't start containers
         env:
-        SERVER_SERVICE_PORT: ${{ secrets.SERVER_SERVICE_PORT }}
-        WEB_CLIENT_PORT: ${{ secrets.WEB_CLIENT_PORT }}
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-        MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-        MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-        DB_PORT: ${{ secrets.DB_PORT }}
+          SERVER_SERVICE_PORT: ${{ secrets.SERVER_SERVICE_PORT }}
+          WEB_CLIENT_PORT: ${{ secrets.WEB_CLIENT_PORT }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
 
       - name: Check Docker Images
         run: docker images # Optional, to verify images were built
