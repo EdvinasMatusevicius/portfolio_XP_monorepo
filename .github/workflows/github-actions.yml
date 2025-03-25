@@ -11,12 +11,12 @@ jobs:
 
     env:
       NODE_ENV: production
-      # SERVER_SERVICE_PORT: ${{ secrets.SERVER_SERVICE_PORT }}
-      # WEB_CLIENT_PORT: ${{ secrets.WEB_CLIENT_PORT }}
-      # MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-      # MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-      # MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-      # DB_PORT: ${{ secrets.DB_PORT }}
+      SERVER_SERVICE_PORT: ${{ secrets.SERVER_SERVICE_PORT }}
+      WEB_CLIENT_PORT: ${{ secrets.WEB_CLIENT_PORT }}
+      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+      MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
 
     steps:
       - name: Checkout repository
