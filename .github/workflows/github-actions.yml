@@ -64,19 +64,7 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }} # Optional, only if you have a passphrase for your SSH key
           port: 22                                # The port for SSH (default is 22)
           script: |
-            cd /portfolio_XP_monorepo || exit
-
-            # Pull the latest changes from GitHub (make sure the VPS has Git installed)
-            git pull --recurse-submodules
-
-            # Stop and remove the existing containers
-            docker-compose down
-
-            # Start the containers (this will recreate them if any changes are detected)
-            docker-compose up -d
-
-            # Optionally, remove unused Docker images to save space
-            docker system prune -f
+            ls
 
       # - name: Login to GitHub Container Registry
       #   uses: docker/login-action@v3
