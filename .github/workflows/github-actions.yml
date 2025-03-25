@@ -72,6 +72,13 @@ jobs:
             # Stop and remove the existing containers
             docker-compose down
 
+            echo "SERVER_SERVICE_PORT=${{ secrets.SERVER_SERVICE_PORT }}" > .env
+            echo "WEB_CLIENT_PORT=${{ secrets.WEB_CLIENT_PORT }}" >> .env
+            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
+            echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
+            echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> .env
+            echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+
             # Start the containers (this will recreate them if any changes are detected)
             docker-compose up -d
 
