@@ -69,13 +69,20 @@ jobs:
             # Pull the latest changes from GitHub (make sure the VPS has Git installed)
             git pull --recurse-submodules
 
-            echo "NODE_ENV=production" > .env
-            echo "SERVER_SERVICE_PORT=${{ secrets.SERVER_SERVICE_PORT }}" >> .env
-            echo "WEB_CLIENT_PORT=${{ secrets.WEB_CLIENT_PORT }}" >> .env
-            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
-            echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
-            echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> .env
-            echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+            echo "NODE_ENV=production" > temp_env
+            echo "SERVER_SERVICE_PORT=${{ secrets.SERVER_SERVICE_PORT }}" >> temp_env
+            echo "WEB_CLIENT_PORT=${{ secrets.WEB_CLIENT_PORT }}" >> temp_env
+            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> temp_env
+            echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> temp_env
+            echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> temp_env
+            echo "DB_PORT=${{ secrets.DB_PORT }}" >> temp_env
+            
+            # Merge with existing .env file if it exists
+            if [ -f .env ]; then
+                cat .env >> temp_env  # Append old variables to new temp file
+            fi
+            
+            mv temp_env .env
 
             # Stop and remove the existing containers
             docker-compose down
