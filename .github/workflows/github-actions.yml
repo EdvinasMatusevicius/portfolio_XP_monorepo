@@ -64,6 +64,7 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }} # Optional, only if you have a passphrase for your SSH key
           port: 22                                # The port for SSH (default is 22)
           script: |
+            pwd
             ls
 
       # - name: Login to GitHub Container Registry
