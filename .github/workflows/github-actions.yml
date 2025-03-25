@@ -19,46 +19,51 @@ jobs:
       DB_PORT: ${{ secrets.DB_PORT }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          submodules: true
+      # - name: Checkout repository
+      #   uses: actions/checkout@v3
+      #   with:
+      #     submodules: true
 
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+      # - name: Set up SSH key
+      #   run: |
+      #     mkdir -p ~/.ssh
+      #     echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
 
-          eval "$(ssh-agent -s)"
+      #     eval "$(ssh-agent -s)"
 
-          echo "${{ secrets.SSH_PASSPHRASE }}" | ssh-add ~/.ssh/id_rsa
+      #     echo "${{ secrets.SSH_PASSPHRASE }}" | ssh-add ~/.ssh/id_rsa
 
-          ssh-keyscan -H ${{ secrets.SSH_IP }} >> ~/.ssh/known_hosts
+      #     ssh-keyscan -H ${{ secrets.SSH_IP }} >> ~/.ssh/known_hosts
           
-      - name: Install Docker Compose (if not already present)
-        run: |
-          if ! command -v docker-compose &> /dev/null
-          then
-            echo "Docker Compose not found, installing..."
-            sudo apt-get update
-            sudo apt-get install -y docker-compose
-            docker-compose --version
-          else
-            echo "Docker Compose already installed."
-            docker-compose --version
-          fi
-          docker --version # Verify Docker is available (should be)
+      # - name: Install Docker Compose (if not already present)
+      #   run: |
+      #     if ! command -v docker-compose &> /dev/null
+      #     then
+      #       echo "Docker Compose not found, installing..."
+      #       sudo apt-get update
+      #       sudo apt-get install -y docker-compose
+      #       docker-compose --version
+      #     else
+      #       echo "Docker Compose already installed."
+      #       docker-compose --version
+      #     fi
+      #     docker --version # Verify Docker is available (should be)
       
-      - name: Build Docker images locally to verify
-        run: |
-          docker-compose build
+      # - name: Build Docker images locally to verify
+      #   run: |
+      #     docker-compose build
 
 
-      - name: SSH into VPS and deploy
-        run: |
-          ssh -o StrictHostKeyChecking=no ed@${{ secrets.SSH_IP }} << 'EOF'
-            # Navigate to the project directory on your VPS
+      - name: SSH into VPS and deploy using appleboy/ssh-action
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_IP }}             # The IP address of your VPS
+          username: user                         # The username to SSH into the VPS
+          key: ${{ secrets.SSH_KEY }}             # The private SSH key from GitHub Secrets
+          passphrase: ${{ secrets.SSH_PASSPHRASE }} # Optional, only if you have a passphrase for your SSH key
+          port: 22                                # The port for SSH (default is 22)
+          script: |
             cd /portfolio_XP_monorepo || exit
 
             # Pull the latest changes from GitHub (make sure the VPS has Git installed)
