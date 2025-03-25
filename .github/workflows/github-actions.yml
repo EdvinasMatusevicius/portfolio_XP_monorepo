@@ -59,7 +59,7 @@ jobs:
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_IP }}             # The IP address of your VPS
-          username: user                         # The username to SSH into the VPS
+          username: ed                         # The username to SSH into the VPS
           key: ${{ secrets.SSH_KEY }}             # The private SSH key from GitHub Secrets
           passphrase: ${{ secrets.SSH_PASSPHRASE }} # Optional, only if you have a passphrase for your SSH key
           port: 22                                # The port for SSH (default is 22)
