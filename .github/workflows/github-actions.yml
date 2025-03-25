@@ -31,11 +31,25 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
           eval "$(ssh-agent -s)"
-          
+
           echo "${{ secrets.SSH_PASSPHRASE }}" | ssh-add ~/.ssh/id_rsa
 
           ssh-keyscan -H ${{ secrets.SSH_IP }} >> ~/.ssh/known_hosts
-
+          
+      - name: Install Docker Compose (if not already present)
+        run: |
+          if ! command -v docker-compose &> /dev/null
+          then
+            echo "Docker Compose not found, installing..."
+            sudo apt-get update
+            sudo apt-get install -y docker-compose
+            docker-compose --version
+          else
+            echo "Docker Compose already installed."
+            docker-compose --version
+          fi
+          docker --version # Verify Docker is available (should be)
+      
       - name: Build Docker images locally to verify
         run: |
           docker-compose build
