@@ -57,7 +57,7 @@ jobs:
 
       - name: SSH into VPS and deploy
         run: |
-          ssh -o StrictHostKeyChecking=no user@${{ secrets.SSH_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ed@${{ secrets.SSH_IP }} << 'EOF'
             # Navigate to the project directory on your VPS
             cd /portfolio_XP_monorepo || exit
 
