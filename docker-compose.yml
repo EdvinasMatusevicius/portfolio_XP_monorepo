@@ -23,6 +23,9 @@ services:
   client:
     build: 
       context: ./packages/client
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://server:${SERVER_SERVICE_PORT}
     restart: always
     depends_on:
       - server
@@ -35,7 +38,7 @@ services:
       - shared-network
     command: npm run dev
     environment:
-      - REACT_APP_API_URL=http://server:8080/
+      - VITE_API_URL=http://server:${SERVER_SERVICE_PORT}
   databaseXp:
     image: mysql
     restart: always
