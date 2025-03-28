@@ -25,7 +25,7 @@ services:
       context: ./packages/client
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: http://host.docker.internal:${SERVER_SERVICE_PORT}
+        VITE_API_URL: http://93.127.213.247/:${SERVER_SERVICE_PORT}
     restart: always
     depends_on:
       - server
@@ -37,10 +37,10 @@ services:
     networks:
       - shared-network
     command: npm run dev
-    extra_hosts:
-      - "host.docker.internal:172.17.0.1"
+    # extra_hosts:
+    #   - "host.docker.internal:172.17.0.1"
     environment:
-      - VITE_API_URL=http://host.docker.internal:${SERVER_SERVICE_PORT}
+      - VITE_API_URL=http://93.127.213.247/:${SERVER_SERVICE_PORT}
   databaseXp:
     image: mysql
     restart: always
