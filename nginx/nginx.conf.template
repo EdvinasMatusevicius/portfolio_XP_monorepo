@@ -1,0 +1,65 @@
+pid /var/run/nginx.pid;
+
+events {
+    worker_connections 768;
+}
+
+http {
+    # Tell Nginx how to handle file types
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    # Basic Logging
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    sendfile on;
+    # Hide Nginx version
+    server_tokens off;
+
+    # Define where your app containers are (using Docker service names)
+    upstream client_app {
+        server client:${WEB_CLIENT_PORT}; # e.g., client:5173
+    }
+
+    upstream server_api {
+        server server:${SERVER_SERVICE_PORT}; # e.g., server:3000
+    }
+
+    # The main configuration for your site
+    server {
+        listen 80;
+        server_name _; # Listen on any hostname (your VPS IP)
+
+        # Route API requests (/api/...) to the backend Node server
+        location /api/ {
+            proxy_pass http://server_api/; # Forward the request
+
+            # --- Essential Headers for Backend ---
+            # Let the backend know the original host requested by the client
+            proxy_set_header Host $host;
+            # Pass the real client IP address
+            proxy_set_header X-Real-IP $remote_addr;
+            # Pass the list of IPs including proxies
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            # Let the backend know if the original request was http or https (important later)
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        # Route all other requests (/, /about, etc.) to the frontend React server
+        location / {
+            proxy_pass http://client_app; # Forward the request
+
+            # --- Essential Headers for Frontend (especially dev server) ---
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+
+            # --- Headers needed for Vite HMR (WebSockets) ---
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+        }
+    }
+}

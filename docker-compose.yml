@@ -12,8 +12,8 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_HOST: ${MYSQL_HOST}
       DB_PORT: ${DB_PORT}
-    ports:
-      - ${SERVER_SERVICE_PORT}:${SERVER_SERVICE_PORT}
+    # ports:
+    #   - ${SERVER_SERVICE_PORT}:${SERVER_SERVICE_PORT}
     volumes:
       - ./packages/server:/usr/portfolioXP/
       - /usr/portfolioXP/node_modules
@@ -27,16 +27,14 @@ services:
     restart: always
     depends_on:
       - server
-    ports:
-      - ${WEB_CLIENT_PORT}:${WEB_CLIENT_PORT}
+    # ports:
+    #   - ${WEB_CLIENT_PORT}:${WEB_CLIENT_PORT}
     volumes:
       - ./packages/client:/usr/portfolioXP/
       - /usr/portfolioXP/node_modules
     networks:
       - shared-network
     command: npm run dev
-    environment:
-      - VITE_API_URL=http://93.127.213.247:${SERVER_SERVICE_PORT}
   databaseXp:
     image: mysql
     restart: always
@@ -45,13 +43,32 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_HOST: ${MYSQL_HOST}
       DB_PORT: ${DB_PORT}
-    ports:
-      - ${DB_PORT}:${DB_PORT}
+    # ports:
+    #   - ${DB_PORT}:${DB_PORT}
     volumes:
       - ./mysql-init:/docker-entrypoint-initdb.d
       - dbdata:/var/lib/portfolioDb/data
     networks:
+      - shared-network  
+  nginx:
+    image: nginx:stable-alpine
+    restart: always
+    ports:
+      - "80:80"
+      # HTTPS later
+      # - "443:443"
+    volumes:
+      - ./nginx/nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
+    environment:
+      WEB_CLIENT_PORT: ${WEB_CLIENT_PORT}
+      SERVER_SERVICE_PORT: ${SERVER_SERVICE_PORT}
+    command: /bin/sh -c "envsubst '$$WEB_CLIENT_PORT $$SERVER_SERVICE_PORT' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    networks:
       - shared-network
+    depends_on:
+      - client
+      - server
+    
 networks:
   shared-network:
     driver: bridge
