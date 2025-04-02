@@ -20,21 +20,6 @@ services:
     networks:
       - shared-network
     command: /usr/portfolioXP/node_modules/.bin/nodemon -L --exec ts-node ./src/index.ts
-  client:
-    build: 
-      context: ./packages/client
-      dockerfile: Dockerfile
-    restart: always
-    depends_on:
-      - server
-    # ports:
-    #   - ${WEB_CLIENT_PORT}:${WEB_CLIENT_PORT}
-    volumes:
-      - ./packages/client:/usr/portfolioXP/
-      - /usr/portfolioXP/node_modules
-    networks:
-      - shared-network
-    command: npm run dev
   databaseXp:
     image: mysql
     restart: always
@@ -51,7 +36,9 @@ services:
     networks:
       - shared-network  
   nginx:
-    image: nginx:stable-alpine
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
     restart: always
     ports:
       - "80:80"
@@ -66,7 +53,6 @@ services:
     networks:
       - shared-network
     depends_on:
-      - client
       - server
     
 networks:
