@@ -41,22 +41,39 @@ services:
       dockerfile: nginx/Dockerfile
     restart: always
     ports:
-      - "80:80"
-      # HTTPS later
-      # - "443:443"
+      - 80:80
+      - 443:443
     volumes:
       - ./nginx/nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
+      - certbot_certs:/etc/letsencrypt
+      - certbot_webroot:/var/www/certbot
     environment:
-      WEB_CLIENT_PORT: ${WEB_CLIENT_PORT}
       SERVER_SERVICE_PORT: ${SERVER_SERVICE_PORT}
-    command: /bin/sh -c "envsubst '$$WEB_CLIENT_PORT $$SERVER_SERVICE_PORT' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+      DOMAIN_NAME: ${DOMAIN_NAME}
+    command: /bin/sh -c "envsubst '$$SERVER_SERVICE_PORT $$DOMAIN_NAME' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     networks:
       - shared-network
     depends_on:
       - server
-    
+  
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      # Share the same volumes with Nginx
+      - certbot_certs:/etc/letsencrypt
+      - certbot_webroot:/var/www/certbot
+    # The command will run 'certbot renew' periodically.
+    # The initial certificate request is done manually first.
+    # Adjust sleep time as needed (Let's Encrypt suggests checking twice a day)
+    # The deploy-hook reloads Nginx gracefully after successful renewal.
+    command: sh -c 'trap exit TERM; while :; do certbot renew --quiet --deploy-hook "docker kill -s HUP nginx"; sleep 12h & wait $${!}; done;'
+    depends_on:
+      - nginx
 networks:
   shared-network:
     driver: bridge
 volumes:
   dbdata:
+  certbot_certs:
+  certbot_webroot:

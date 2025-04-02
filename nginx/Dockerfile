@@ -14,4 +14,4 @@ COPY --from=builder /usr/portfolioXP/dist /usr/share/nginx/html
 COPY ./nginx/nginx.conf.template /etc/nginx/templates/nginx.conf.template
 EXPOSE 80
 # Replace env vars in template and create final config
-CMD ["/bin/sh", "-c", "envsubst '$$WEB_CLIENT_PORT $$SERVER_SERVICE_PORT' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
+CMD ["/bin/sh", "-c", "envsubst '$$SERVER_SERVICE_PORT' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
