@@ -80,6 +80,7 @@ jobs:
               --email edvinas2121@gmail.com \
               --agree-tos \
               --no-eff-email \
+              --force-renewal \
               -d ${{ secrets.DOMAIN_NAME }} -d www.${{ secrets.DOMAIN_NAME }}
 
             # Stop and remove the existing containers again (to pick up new certs)
