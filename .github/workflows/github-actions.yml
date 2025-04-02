@@ -67,22 +67,8 @@ jobs:
             # Stop and remove the existing containers
             docker-compose down
 
-            docker-compose up -d nginx
-
-            # Wait a few seconds for Nginx to start
-            sleep 10
-
-            # Run Certbot to obtain the initial certificates
-            docker-compose run --rm certbot certonly --webroot \
-              -w /var/www/certbot \
-              --email edvinas2121@gmail.com \
-              --agree-tos \
-              --no-eff-email \
-              --staging \
-              -d edspc.eu -d www.edspc.eu
-
             # Start the containers (this will recreate them if any changes are detected)
-            # docker-compose up -d
+            docker-compose up -d
 
             # Optionally, remove unused Docker images to save space
-            # docker system prune -f
+            docker system prune -f
