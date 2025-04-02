@@ -23,23 +23,23 @@ jobs:
         with:
           submodules: true
           
-      - name: Install Docker Compose (if not already present)
-        run: |
-          if ! command -v docker-compose &> /dev/null
-          then
-            echo "Docker Compose not found, installing..."
-            sudo apt-get update
-            sudo apt-get install -y docker-compose
-            docker-compose --version
-          else
-            echo "Docker Compose already installed."
-            docker-compose --version
-          fi
-          docker --version # Verify Docker is available (should be)
+      # - name: Install Docker Compose (if not already present)
+      #   run: |
+      #     if ! command -v docker-compose &> /dev/null
+      #     then
+      #       echo "Docker Compose not found, installing..."
+      #       sudo apt-get update
+      #       sudo apt-get install -y docker-compose
+      #       docker-compose --version
+      #     else
+      #       echo "Docker Compose already installed."
+      #       docker-compose --version
+      #     fi
+      #     docker --version # Verify Docker is available (should be)
       
-      - name: Build Docker images locally to verify
-        run: |
-          docker-compose build
+      # - name: Build Docker images locally to verify
+      #   run: |
+      #     docker-compose build
 
 
       - name: SSH into VPS and deploy using appleboy/ssh-action
@@ -66,6 +66,20 @@ jobs:
 
             # Stop and remove the existing containers
             docker-compose down
+
+            docker-compose up -d nginx
+
+            # Wait a few seconds for Nginx to start
+            sleep 10
+
+            # Run Certbot to obtain the initial certificates
+            docker-compose run --rm certbot certonly --webroot \
+              -w /var/www/certbot \
+              --email edvinas2121@gmail.com \
+              --agree-tos \
+              --no-eff-email \
+              --staging \
+              -d edspc.eu -d www.edspc.eu
 
             # Start the containers (this will recreate them if any changes are detected)
             # docker-compose up -d
