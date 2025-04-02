@@ -67,30 +67,8 @@ jobs:
             # Stop and remove the existing containers
             docker-compose down
 
-
-            # Start only the nginx container in the background
-            docker-compose up -d nginx
-
-            # Wait a few seconds for Nginx to start
-            sleep 10
-
-            # Run Certbot to obtain the PRODUCTION certificates (no --staging)
-            docker-compose run --rm certbot certonly --webroot \
-              -w /var/www/certbot \
-              --email edvinas2121@gmail.com \
-              --agree-tos \
-              --no-eff-email \
-              --force-renewal \
-              -d ${{ secrets.DOMAIN_NAME }} -d www.${{ secrets.DOMAIN_NAME }}
-
-            # Stop and remove the existing containers again (to pick up new certs)
-            docker-compose down
-
-            # Start all containers with the new certificates
+            # Start the containers (this will recreate them if any changes are detected)
             docker-compose up -d
 
-            # # Start the containers (this will recreate them if any changes are detected)
-            # docker-compose up -d
-
-            # # Optionally, remove unused Docker images to save space
-            # docker system prune -f
+            # Optionally, remove unused Docker images to save space
+            docker system prune -f

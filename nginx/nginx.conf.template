@@ -34,61 +34,61 @@ http {
         }
 
         # Redirect all other HTTP traffic to HTTPS
-        # location / {
-        #     return 301 https://$host$request_uri;
-        # }
+        location / {
+            return 301 https://$host$request_uri;
+        }
     }
-    # server {
-    #     listen 443 ssl;
-    #     http2 on;
-    #     listen [::]:443 ssl;
-    #     server_name ${DOMAIN_NAME} www.${DOMAIN_NAME};
+    server {
+        listen 443 ssl;
+        http2 on;
+        listen [::]:443 ssl;
+        server_name ${DOMAIN_NAME} www.${DOMAIN_NAME};
 
-    #     # --- SSL Configuration ---
-    #     # Paths to certificates provided by Certbot via the shared volume
-    #     ssl_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem;
-    #     ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem;
+        # --- SSL Configuration ---
+        # Paths to certificates provided by Certbot via the shared volume
+        ssl_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem;
 
-    #     # Include modern SSL parameters (important for security)
-    #     # Generate yours using: https://ssl-config.mozilla.org/
-    #     # Example (Intermediate compatibility):
-    #     ssl_protocols TLSv1.2 TLSv1.3;
-    #     ssl_prefer_server_ciphers off;
-    #     ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+        # Include modern SSL parameters (important for security)
+        # Generate yours using: https://ssl-config.mozilla.org/
+        # Example (Intermediate compatibility):
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_prefer_server_ciphers off;
+        ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
 
-    #     # OCSP Stapling (Optional but recommended for performance)
-    #     # ssl_stapling on;
-    #     # ssl_stapling_verify on;
-    #     # Add the Let's Encrypt root/intermediate certificate for OCSP
-    #     # ssl_trusted_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/chain.pem;
+        # OCSP Stapling (Optional but recommended for performance)
+        # ssl_stapling on;
+        # ssl_stapling_verify on;
+        # Add the Let's Encrypt root/intermediate certificate for OCSP
+        # ssl_trusted_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/chain.pem;
 
-    #     # Add HSTS Header (Optional but recommended after testing)
-    #     # Tells browsers to always connect via HTTPS for the next max-age seconds
-    #     # WARNING: Start with a low max-age (e.g., 60) and increase only when
-    #     #          you are CERTAIN HTTPS is working perfectly.
-    #     # add_header Strict-Transport-Security "max-age=60; includeSubDomains; preload" always;
+        # Add HSTS Header (Optional but recommended after testing)
+        # Tells browsers to always connect via HTTPS for the next max-age seconds
+        # WARNING: Start with a low max-age (e.g., 60) and increase only when
+        #          you are CERTAIN HTTPS is working perfectly.
+        # add_header Strict-Transport-Security "max-age=60; includeSubDomains; preload" always;
 
-    #     # --- Location Blocks (same as before, but now inside HTTPS server) ---
+        # --- Location Blocks (same as before, but now inside HTTPS server) ---
 
-    #     # Route API requests (/api/...) to the backend Node server
-    #     location /api/ {
-    #         proxy_pass http://server_api/; # Forward the request
-    #         proxy_set_header Host $host;
-    #         proxy_set_header X-Real-IP $remote_addr;
-    #         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    #         proxy_set_header X-Forwarded-Proto $scheme;
-    #         # Add proxy buffering options if needed
-    #         # proxy_buffering off;
-    #         # proxy_buffer_size   128k;
-    #         # proxy_buffers   4 256k;
-    #         # proxy_busy_buffers_size   256k;
-    #     }
+        # Route API requests (/api/...) to the backend Node server
+        location /api/ {
+            proxy_pass http://server_api/; # Forward the request
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            # Add proxy buffering options if needed
+            # proxy_buffering off;
+            # proxy_buffer_size   128k;
+            # proxy_buffers   4 256k;
+            # proxy_busy_buffers_size   256k;
+        }
 
-    #     # Route all other requests (/, /about, etc.) to the frontend build files
-    #     location / {
-    #         root /usr/share/nginx/html; # Path where your static files are inside Nginx container
-    #         index index.html index.htm;
-    #         try_files $uri $uri/ /index.html; # For SPA routing
-    #     }
-    # }
+        # Route all other requests (/, /about, etc.) to the frontend build files
+        location / {
+            root /usr/share/nginx/html; # Path where your static files are inside Nginx container
+            index index.html index.htm;
+            try_files $uri $uri/ /index.html; # For SPA routing
+        }
+    }
 }
