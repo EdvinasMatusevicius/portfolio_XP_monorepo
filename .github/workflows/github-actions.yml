@@ -68,7 +68,7 @@ jobs:
             docker-compose down
 
             # Start the containers (this will recreate them if any changes are detected)
-            docker-compose up -d
+            docker-compose up --force-recreate --no-cache -d
 
             # Optionally, remove unused Docker images to save space
             docker system prune -f
