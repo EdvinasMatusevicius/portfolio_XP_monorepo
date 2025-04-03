@@ -23,23 +23,23 @@ jobs:
         with:
           submodules: true
           
-      - name: Install Docker Compose (if not already present)
-        run: |
-          if ! command -v docker-compose &> /dev/null
-          then
-            echo "Docker Compose not found, installing..."
-            sudo apt-get update
-            sudo apt-get install -y docker-compose
-            docker-compose --version
-          else
-            echo "Docker Compose already installed."
-            docker-compose --version
-          fi
-          docker --version # Verify Docker is available (should be)
+      # - name: Install Docker Compose (if not already present)
+      #   run: |
+      #     if ! command -v docker-compose &> /dev/null
+      #     then
+      #       echo "Docker Compose not found, installing..."
+      #       sudo apt-get update
+      #       sudo apt-get install -y docker-compose
+      #       docker-compose --version
+      #     else
+      #       echo "Docker Compose already installed."
+      #       docker-compose --version
+      #     fi
+      #     docker --version # Verify Docker is available (should be)
       
-      - name: Build Docker images locally to verify
-        run: |
-          docker-compose build
+      # - name: Build Docker images locally to verify
+      #   run: |
+      #     docker-compose build
 
 
       - name: SSH into VPS and deploy using appleboy/ssh-action
