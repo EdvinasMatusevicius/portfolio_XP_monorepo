@@ -12,6 +12,6 @@ FROM nginx:stable-alpine
 COPY --from=builder /usr/portfolioXP/dist /usr/share/nginx/html
 # Copy the Nginx configuration template
 COPY ./nginx/nginx.conf.template /etc/nginx/templates/nginx.conf.template
-EXPOSE 80
+EXPOSE 80 443
 # Replace env vars in template and create final config
-CMD ["/bin/sh", "-c", "envsubst '$$SERVER_SERVICE_PORT' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
+CMD ["/bin/sh", "-c", "envsubst '$$SERVER_SERVICE_PORT $$DOMAIN_NAME' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]

@@ -60,14 +60,10 @@ services:
     image: certbot/certbot
     container_name: certbot
     volumes:
-      # Share the same volumes with Nginx
       - certbot_certs:/etc/letsencrypt
       - certbot_webroot:/var/www/certbot
-    # The command will run 'certbot renew' periodically.
-    # The initial certificate request is done manually first.
-    # Adjust sleep time as needed (Let's Encrypt suggests checking twice a day)
-    # The deploy-hook reloads Nginx gracefully after successful renewal.
-    command: sh -c 'trap exit TERM; while :; do certbot renew --quiet --deploy-hook "docker kill -s HUP nginx"; sleep 12h & wait $${!}; done;'
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --deploy-hook \"nginx -s reload\" || true; sleep 12h & wait $${!}; done;'"
+    network_mode: "service:nginx"
     depends_on:
       - nginx
 networks:
