@@ -55,10 +55,12 @@ services:
       - shared-network
     depends_on:
       - server
-  
+
   certbot:
     image: certbot/certbot
     container_name: certbot
+    profiles:
+      - production
     volumes:
       - certbot_certs:/etc/letsencrypt
       - certbot_webroot:/var/www/certbot

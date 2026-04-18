@@ -8,10 +8,10 @@ RUN npm run build
 
 # Stage 2: Create the final Nginx image
 FROM nginx:stable-alpine
-# Copy built assets from the builder stage
 COPY --from=builder /usr/portfolioXP/dist /usr/share/nginx/html
-# Copy the Nginx configuration template
 COPY ./nginx/nginx.conf.template /etc/nginx/templates/nginx.conf.template
+COPY ./nginx/nginx.http.template /etc/nginx/templates/nginx.http.template
+COPY ./nginx/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 EXPOSE 80 443
-# Replace env vars in template and create final config
-CMD ["/bin/sh", "-c", "envsubst '$$SERVER_SERVICE_PORT $$DOMAIN_NAME' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
+ENTRYPOINT ["/entrypoint.sh"]
